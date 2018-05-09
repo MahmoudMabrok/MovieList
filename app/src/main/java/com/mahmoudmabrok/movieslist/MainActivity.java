@@ -18,7 +18,10 @@ import java.util.Map;
 
 public class MainActivity extends Activity {
 
-    String url = "http://www.themoviedb.org/discover/movie";
+    //String url = "https://api.themoviedb.org/3/movie/550";
+    //  String url = "https://api.themoviedb.org/3/discover/movie?api_key=9b99a948f3632e5329d6f62622001602&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_year=2017";
+    String ApiKey = "9b99a948f3632e5329d6f62622001602";
+    String url = "https://api.themoviedb.org/3/discover/movie";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +29,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         final ActivityMainBinding binder = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.v("response", response);
@@ -35,17 +38,22 @@ public class MainActivity extends Activity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.v("responseError", error.getMessage());
-                binder.tvShow.setText(error.getMessage());
+                try {
+                    if (error != null)
+                        Log.v("responseError", error.getMessage().toString());
+                    binder.tvShow.setText(error.getMessage().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-
-                params.put("sort_by", "Popularity.desc");
+                params.put("api_key", ApiKey);
+                params.put("page", "1");
+                params.put("sort_by", "popularity.desc");
                 params.put("primary_release_year", "2017");
-                params.put("with_genres", "18");
 
                 return params;
             }
