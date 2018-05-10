@@ -1,10 +1,12 @@
 package com.mahmoudmabrok.movieslist;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -35,8 +37,6 @@ public class MainActivity extends Activity {
     ExpandleAdapter expandleAdapter;
 
     ArrayList<Movie> listMovies;
-
-
     ActivityMainBinding mainLayout;
 
     @Override
@@ -55,14 +55,21 @@ public class MainActivity extends Activity {
         mainLayout.btnShowAll.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+                final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+
+                final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.hearder);
                 StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
+                        progressDialog.dismiss();
+                        linearLayout.setVisibility(View.VISIBLE);
+                        mainLayout.btnShowAll.setVisibility(View.GONE);
                         _headers.clear();
                         _childs.clear();
                         Log.v("response", response);
-                        //   mainLayout.tvShow.setText(response);
                         try {
 
                             JSONObject root = new JSONObject(response);
@@ -80,6 +87,7 @@ public class MainActivity extends Activity {
                                 _headers.add(movie.getMovieHashMap());
                                 _childs.put(_headers.get(i), movie.getmOverview());
                             }
+
                             updateAdapter();
 
                         } catch (JSONException e) {
@@ -89,10 +97,10 @@ public class MainActivity extends Activity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
                         try {
                             if (error != null)
                                 Log.v("responseError", error.getMessage().toString());
-                            //     mainLayout.tvShow.setText(error.getMessage().toString());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
