@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Mahmoud on 5/9/2018.
@@ -18,10 +19,11 @@ public class ExpandleAdapter extends BaseExpandableListAdapter {
 
     private Context context;
 
-    private List<String> _headers;
-    private HashMap<String, List<String>> _childs;
+    private List<HashMap<String, String>> _headers;
+    private HashMap<HashMap<String, String>, String> _childs;
 
-    public ExpandleAdapter(Context context, List<String> _headers, HashMap<String, List<String>> _childs) {
+
+    public ExpandleAdapter(Context context, List<HashMap<String, String>> _headers, HashMap<HashMap<String, String>, String> _childs) {
         this.context = context;
         this._headers = _headers;
         this._childs = _childs;
@@ -35,7 +37,7 @@ public class ExpandleAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return _childs.get(_headers.get(groupPosition)).size();
+        return _childs.get(_headers.get(groupPosition)).length() > 0 ? 1 : 0;
     }
 
     @Override
@@ -45,9 +47,7 @@ public class ExpandleAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return _childs.get(_headers.get(groupPosition))
-                .get(childPosition);
-
+        return _childs.get(_headers.get(groupPosition));
     }
 
     @Override
@@ -73,16 +73,19 @@ public class ExpandleAdapter extends BaseExpandableListAdapter {
             convertView = layoutInflater.inflate(R.layout.group_list, null);
         }
 
-        String headerText = _headers.get(groupPosition);
-        String[] texts = headerText.split("[/*]");
+        Map<String, String> mdata = _headers.get(groupPosition);
 
-        TextView tvHome = (TextView) convertView.findViewById(R.id.tvHome);
-        TextView tvAway = (TextView) convertView.findViewById(R.id.tvAway);
-        TextView tvResult = (TextView) convertView.findViewById(R.id.tvResult);
 
-        tvHome.setText(texts[0]);
-        tvResult.setText(texts[1]);
-        tvAway.setText(texts[2]);
+        TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
+        TextView tvCount = (TextView) convertView.findViewById(R.id.tvCount);
+        TextView tvYear = (TextView) convertView.findViewById(R.id.tvYear);
+        TextView tvRate = (TextView) convertView.findViewById(R.id.tvRate);
+
+        tvTitle.setText(mdata.get("title"));
+        tvCount.setText(mdata.get("vote_count"));
+        tvYear.setText(mdata.get("release_date"));
+        tvRate.setText(mdata.get("vote_average"));
+
 
         return convertView;
 
@@ -94,11 +97,11 @@ public class ExpandleAdapter extends BaseExpandableListAdapter {
 
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.list_item1, null);
+            convertView = layoutInflater.inflate(R.layout.list_item, null);
         }
 
-        String childText = _childs.get(_headers.get(groupPosition)).get(childPosition);
-        TextView textView = (TextView) convertView.findViewById(R.id.tv_item);
+        String childText = _childs.get(_headers.get(groupPosition));
+        TextView textView = (TextView) convertView.findViewById(R.id.tvOverview);
         textView.setText(childText);
 
 
