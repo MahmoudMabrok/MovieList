@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -54,9 +55,9 @@ public class MainActivity extends Activity {
 
         mainLayout.btnShowAll.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
                 progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Gey Movies ^_^ ");
                 progressDialog.setCancelable(false);
                 progressDialog.show();
 
@@ -98,6 +99,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
+                        Toast.makeText(MainActivity.this, "error ,try again", Toast.LENGTH_SHORT).show();
                         try {
                             if (error != null)
                                 Log.v("responseError", error.getMessage().toString());
