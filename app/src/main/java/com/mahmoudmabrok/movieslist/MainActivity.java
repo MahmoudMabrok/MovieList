@@ -33,12 +33,12 @@ public class MainActivity extends Activity {
     String ApiKey = "9b99a948f3632e5329d6f62622001602";
     String url = "https://api.themoviedb.org/3/discover/movie";
 
-    List<HashMap<String, String>> _headers;
-    HashMap<HashMap<String, String>, String> _childs;
+    List<HashMap<String, String>> mHeaderList;
+    HashMap<HashMap<String, String>, String> mChildList;
     ExpandleAdapter expandleAdapter;
 
     ArrayList<Movie> listMovies;
-    ActivityMainBinding mainLayout;
+    ActivityMainBinding mainLayout;  //use binding instead of findViewById()
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +46,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         mainLayout = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        _headers = new ArrayList<>();
-        _childs = new HashMap<>();
+        mHeaderList = new ArrayList<>();
+        mChildList = new HashMap<>();
         listMovies = new ArrayList<>();
 
-        expandleAdapter = new ExpandleAdapter(this, _headers, _childs);
+        expandleAdapter = new ExpandleAdapter(this, mHeaderList, mChildList);
         mainLayout.expandedList.setAdapter(expandleAdapter);
 
         mainLayout.btnShowAll.setOnClickListener(new View.OnClickListener() {
@@ -68,8 +68,8 @@ public class MainActivity extends Activity {
                         progressDialog.dismiss();
                         linearLayout.setVisibility(View.VISIBLE);
                         mainLayout.btnShowAll.setVisibility(View.GONE);
-                        _headers.clear();
-                        _childs.clear();
+                        mHeaderList.clear();
+                        mChildList.clear();
                         Log.v("response", response);
                         try {
 
@@ -85,8 +85,8 @@ public class MainActivity extends Activity {
                                 movie.setmVote_count(jsonObject.getInt("vote_count"));
                                 movie.setRelease_date(jsonObject.getString("release_date"));
 
-                                _headers.add(movie.getMovieHashMap());
-                                _childs.put(_headers.get(i), movie.getmOverview());
+                                mHeaderList.add(movie.getMovieHashMap());
+                                mChildList.put(mHeaderList.get(i), movie.getmOverview());
                             }
 
                             updateAdapter();
